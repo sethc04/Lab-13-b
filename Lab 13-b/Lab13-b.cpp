@@ -3,38 +3,43 @@
 
 using namespace std;
 
-bool isLeapYear(int year);
+int dayOfWeek(int month, int day, int year);
 int daysInMonth(int month, int year);
+bool isLeapYear(int year);
+
+const string dayNames[7] = { "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" };
+const string monthNames[12] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
 int main() {
     string input;
     int month;
+    int day;
     int year;
-    const string monthNames[12] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
     do {
-        cout << "Enter a month and year or Q to quit: ";
+        cout << "Enter a date or Q to quit: ";
         getline(cin, input);
         if (input == "Q" || input == "q") {
             break;
         }
 
-        if (input.length() == 7) {
-            month = stoi(input.substr(0, 2));
-            year = stoi(input.substr(3, 4));
-        }
-        else if (input.length() == 6) {
-            month = stoi(input.substr(0, 1));
-            year = stoi(input.substr(2, 4));
-        }
-
-
-        if (month < 1 || month > 12) {
-            cout << "Invalid month.\n";
+        size_t pos1 = input.find(' ');
+        size_t pos2 = input.find(' ', pos1 + 1);
+        if (pos1 == string::npos || pos2 == string::npos) {
+            cout << "Invalid input format.\n";
             continue;
         }
 
-        cout << monthNames[month - 1] << " " << year << " has " << daysInMonth(month, year) << " days." << endl;
+        month = stoi(input.substr(0, pos1));
+        day = stoi(input.substr(pos1 + 1, pos2 - pos1 - 1));
+        year = stoi(input.substr(pos2 + 1));
+
+        if (month < 1 || month > 12 || day < 1 || day > daysInMonth(month, year) || year < 1) {
+            cout << "Invalid date.\n";
+            continue;
+        }
+
+        cout << dayNames[dayOfWeek(month, day, year)] << ", " << monthNames[month - 1] << " " << day << ", " << year << endl;
     } while (true);
 
     return 0;
@@ -71,4 +76,15 @@ bool isLeapYear(int year) {
     else {
         return false;
     }
+}
+
+int dayOfWeek(int month, int day, int year) {
+    if (month < 3) {
+        month += 12;
+        year--;
+    }
+
+    int h = (day + ((month + 1) * 26) / 10 + year + year / 4 + 6 * (year / 100) + year / 400) % 7;
+
+    return h;
 }

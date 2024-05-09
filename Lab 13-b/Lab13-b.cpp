@@ -26,6 +26,7 @@ int main() {
     return 0;
 }
 
+
 bool isLeapYear(int year) {
     if (year % 4 == 0) {
         if (year % 100 == 0) {
